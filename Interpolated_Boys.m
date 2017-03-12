@@ -6,20 +6,20 @@ function [output,x,index,x_index,Dx] = Interpolated_Boys(n,x,Boys_Table)
 %Boys function
 
 %{
-Nlast = 100; %I don't know which is the maximum number possible for x. It
+Nlast = 50; %I don't know which is the maximum number possible for x. It
 %will depend on g1.alpha, g2.alpha and RPC^2; so probably it can be
 %precalculated for a certain system.
-Npoints = 200;
+Npoints = 500;
 x = linspace(Nlast/Npoints,Nlast,Npoints)';
-n = (0:1:20);
+n = (0:1:30);
 
 [n,x] = meshgrid(n,x);
 Boys_Table = gamma(n+0.5).*gammainc(x,n+0.5)./(2*x.^(n+0.5));
 
-n = (0:1:20); Boys_Table = [1./(2*n+1); Boys_Table];
+Boys_Table = [1./(2*n+1); Boys_Table];
 %}
-Nlast = 100;
-Npoints = 200;
+Nlast = 50;
+Npoints = 500;
 
 
 %I must define the following variable as global outside the
@@ -27,7 +27,7 @@ Npoints = 200;
 %use it.
 %The interpolation formula from Helgaker's book is the following:
 
-if (x > 100)
+if (x > Nlast)
     index = NaN;
     x_index = NaN;
     Dx = NaN;
@@ -50,9 +50,14 @@ else
 index = floor(x*Npoints/Nlast)+1; %400 is the number of points, index will give me the previous x_index point, nearest my input x variable
 x_index = (index-1)*Nlast/Npoints;
 Dx = (x-x_index); %Difference which enters the Taylor expansion
+Dx2 = Dx*Dx;
+Dx3 = Dx2*Dx;
+Dx4 = Dx2*Dx2;
+Dx5 = Dx3*Dx2;
+
 m = n + 1; %column 1 corresponds to n = 0, etc;
 
-output = Boys_Table(index,m)-Boys_Table(index,m+1)*Dx+0.5*Boys_Table(index,m+2)*Dx*Dx-...
-        -1/6*Boys_Table(index,m+3)*Dx*Dx*Dx+1/24*Boys_Table(index,m+4)*Dx*Dx*Dx*Dx-1/120*Boys_Table(index,m+5)*Dx*Dx*Dx*Dx*Dx;
+output = Boys_Table(index,m)-Boys_Table(index,m+1)*Dx+0.5*Boys_Table(index,m+2)*Dx2-...
+        -1/6*Boys_Table(index,m+3)*Dx3+1/24*Boys_Table(index,m+4)*Dx4-1/120*Boys_Table(index,m+5)*Dx5;
 end
 end

@@ -2,7 +2,7 @@ function [Shell_Doublets,NShell_Doublets] = Build_Shell_Doublets(basis)
 
 %Something was wrong. mu needs to loop over a, not a,b. nu loops over b.
 %When I increase mu, I need to reset nu
-nb = size(basis,2);
+nb = size(basis,1);
 
 %Structure of the Shells matrix = [mu_begin mu_end a nu_begin nu_end b ] 
 Shell_Doublets = zeros(2000,6); %2000 shells is more than enough for now, but maybe later I have to change it

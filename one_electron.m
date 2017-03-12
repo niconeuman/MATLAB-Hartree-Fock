@@ -40,19 +40,21 @@ elseif (g1.L == 1 && g2.L ==0)
     S00x = Ex*pp;
     S00y = Ey*pp;
     S00z = Ez*pp;
-    S00 = S00x*S00y*S00z;
+    %S00 = S00x*S00y*S00z;
     T00x = S00x*(a*b/p*(1-2*a*b/p*Qx^2));
     T00y = S00y*(a*b/p*(1-2*a*b/p*Qy^2));
     T00z = S00z*(a*b/p*(1-2*a*b/p*Qz^2));
     
-    Sx0 = (Px-g1.x0)*S00; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
-    Sy0 = (Py-g1.y0)*S00;
-    Sz0 = (Pz-g1.z0)*S00;
-    S = [Sx0;Sy0;Sz0];
+    Sx0 = -(Px-g1.x0)*S00x; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
+    Sy0 = -(Py-g1.y0)*S00y;
+    Sz0 = -(Pz-g1.z0)*S00z;
+    S = [Sx0*S00y*S00z;
+        S00x*Sy0*S00z;
+        S00x*S00y*Sz0];
     
-    Tx0 = (Px-g1.x0)*T00x+b/p*(2*a*Sx0);
-    Ty0 = (Py-g1.y0)*T00y+b/p*(2*a*Sy0);
-    Tz0 = (Pz-g1.z0)*T00z+b/p*(2*a*Sz0);
+    Tx0 = -(Px-g1.x0)*T00x+b/p*(2*a*Sx0);
+    Ty0 = -(Py-g1.y0)*T00y+b/p*(2*a*Sy0);
+    Tz0 = -(Pz-g1.z0)*T00z+b/p*(2*a*Sz0);
     
     Tp_x0 = Tx0*S00y*S00z+Sx0*T00y*S00z+Sx0*S00y*T00z;
     Tp_y0 = T00x*Sy0*S00z+S00x*Ty0*S00z+S00x*Sy0*T00z;
@@ -73,19 +75,19 @@ elseif (g1.L == 0 && g2.L == 1)
     S00x = Ex*pp;
     S00y = Ey*pp;
     S00z = Ez*pp;
-    S00 = S00x*S00y*S00z;
+    %S00 = S00x*S00y*S00z;
     T00x = S00x*(a*b/p*(1-2*a*b/p*Qx^2));
     T00y = S00y*(a*b/p*(1-2*a*b/p*Qy^2));
     T00z = S00z*(a*b/p*(1-2*a*b/p*Qz^2));
     
-    S0x = (Px-g2.x0)*S00; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
-    S0y = (Py-g2.y0)*S00;
-    S0z = (Pz-g2.z0)*S00;
-    S = [S0x,S0y,S0z]; %row vector
+    S0x = -(Px-g2.x0)*S00x; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
+    S0y = -(Py-g2.y0)*S00y;
+    S0z = -(Pz-g2.z0)*S00z;
+    S = [S0x*S00y*S00z,S00x*S0y*S00z,S00x*S00y*S0z]; %row vector
     
-    T0x = (Px-g2.x0)*T00x+a/p*(2*b*S0x);
-    T0y = (Py-g2.y0)*T00y+a/p*(2*b*S0y);
-    T0z = (Pz-g2.z0)*T00z+a/p*(2*b*S0z);
+    T0x = -(Px-g2.x0)*T00x+a/p*(2*b*S0x);
+    T0y = -(Py-g2.y0)*T00y+a/p*(2*b*S0y);
+    T0z = -(Pz-g2.z0)*T00z+a/p*(2*b*S0z);
     
     T0p_x = T0x*S00y*S00z+S0x*T00y*S00z+S0x*S00y*T00z;
     T0p_y = T00x*S0y*S00z+S00x*T0y*S00z+S00x*S0y*T00z;
@@ -105,45 +107,55 @@ elseif (g1.L == 1 && g2.L == 1)
     S00x = Ex*pp;
     S00y = Ey*pp;
     S00z = Ez*pp;
-    S00 = S00x*S00y*S00z;
+    %S00 = S00x*S00y*S00z;
     
     T00x = S00x*(a*b/p*(1-2*a*b/p*Qx^2));
     T00y = S00y*(a*b/p*(1-2*a*b/p*Qy^2));
     T00z = S00z*(a*b/p*(1-2*a*b/p*Qz^2));
     
-    Sx0 = (Px-g1.x0)*S00; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
-    Sy0 = (Py-g1.y0)*S00;
-    Sz0 = (Pz-g1.z0)*S00;
+    Sx0 = -(Px-g1.x0)*S00x; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
+    Sy0 = -(Py-g1.y0)*S00y;
+    Sz0 = -(Pz-g1.z0)*S00z;
     
-    S0x = (Px-g2.x0)*S00; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
-    S0y = (Py-g2.y0)*S00;
-    S0z = (Pz-g2.z0)*S00;
+    S0x = -(Px-g2.x0)*S00x; %Px,Py,Pz depend on alphas, so this has to be performed on primitives
+    S0y = -(Py-g2.y0)*S00y;
+    S0z = -(Pz-g2.z0)*S00z;
     
-    Sxx = (Px-g1.x0)*S0x+1/2/p*(1*Sx0);
-    Syx = (Py-g1.y0)*S0x+1/2/p*(1*Sy0);
-    Szx = (Pz-g1.z0)*S0x+1/2/p*(1*Sz0);
+    %Sign of Px-g1.x0, etc should be reversed, according to Helgaker's
+    %convention
+    Sxx = -(Px-g2.x0)*Sx0+1/2/p*(1*S00x);
+    Syy = -(Py-g2.y0)*S0y+1/2/p*(1*S00y);
+    Szz = -(Pz-g2.z0)*S0z+1/2/p*(1*S00z);
     
-    Sxy = (Px-g1.x0)*S0y+1/2/p*(1*Sx0);
-    Syy = (Py-g1.y0)*S0y+1/2/p*(1*Sy0);
-    Szy = (Pz-g1.z0)*S0y+1/2/p*(1*Sz0);
+    Spx_px = Sxx*S00y*S00z;
+    Spx_py = Sx0*S0y*S00z;
+    Spx_pz = Sx0*S00y*S0z;
     
-    Sxz = (Px-g1.x0)*S0z+1/2/p*(1*Sx0);
-    Syz = (Py-g1.y0)*S0z+1/2/p*(1*Sy0);
-    Szz = (Pz-g1.z0)*S0z+1/2/p*(1*Sz0);
+    Spy_px = S0x*Sy0*S00z;
+    Spy_py = S00x*Syy*S00z;
+    Spy_pz = S00x*Sy0*S0z;
     
-    S = [Sxx,Sxy,Sxz;Syx,Syy,Syz;Szx,Szy,Szz];
+    Spz_px = S0x*S00y*Sz0;
+    Spz_py = S00x*S0y*Sz0;
+    Spz_pz = S00x*S00y*Szz;
     
-    Tx0 = (Px-g1.x0)*T00x+b/p*(2*a*Sx0);
-    Ty0 = (Py-g1.y0)*T00y+b/p*(2*a*Sy0);
-    Tz0 = (Pz-g1.z0)*T00z+b/p*(2*a*Sz0);
+    S = [Spx_px,Spx_py,Spx_pz;
+         Spy_px,Spy_py,Spy_pz;
+         Spz_px,Spz_py,Spz_pz];
     
-    T0x = (Px-g2.x0)*T00x+a/p*(2*b*S0x);
-    T0y = (Py-g2.y0)*T00y+a/p*(2*b*S0y);
-    T0z = (Pz-g2.z0)*T00z+a/p*(2*b*S0z);
+    %This seems to be OK, according to my writing down of Helgaker's relations 
+    Tx0 = -(Px-g1.x0)*T00x+b/p*(2*a*Sx0);
+    Ty0 = -(Py-g1.y0)*T00y+b/p*(2*a*Sy0);
+    Tz0 = -(Pz-g1.z0)*T00z+b/p*(2*a*Sz0);
     
-    Txx = (Px-g2.x0)*Tx0+1/2/p*(1*T00x+0)+a/p*(2*b*Sxx-0);
-    Tyy = (Py-g2.y0)*Ty0+1/2/p*(1*T00y+0)+a/p*(2*b*Syy-0);
-    Tzz = (Pz-g2.z0)*Tz0+1/2/p*(1*T00z+0)+a/p*(2*b*Szz-0);
+    T0x = -(Px-g2.x0)*T00x+a/p*(2*b*S0x);
+    T0y = -(Py-g2.y0)*T00y+a/p*(2*b*S0y);
+    T0z = -(Pz-g2.z0)*T00z+a/p*(2*b*S0z);
+    
+    Txx = -(Px-g2.x0)*Tx0+1/2/p*(1*T00x+0)+a/p*(2*b*Sxx-0);
+    Tyy = -(Py-g2.y0)*Ty0+1/2/p*(1*T00y+0)+a/p*(2*b*Syy-0);
+    Tzz = -(Pz-g2.z0)*Tz0+1/2/p*(1*T00z+0)+a/p*(2*b*Szz-0);
+    %up to here, ok
     
     Tp_xp_x = Txx*S00y*S00z+Sxx*T00y*S00z+Sxx*S00y*T00z; %i,j = 1, others zero
     Tp_xp_y = Tx0*S0y*S00z+Sx0*T0y*S00z+Sx0*S0y*T00z; %i,l = 1, others zero   

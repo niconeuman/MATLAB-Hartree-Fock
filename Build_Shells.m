@@ -1,6 +1,6 @@
 function [Shells,NShells] = Build_Shells(basis)
 %This function creates shells which are arrays 
-nb = size(basis,2);
+nb = size(basis,1);
 
 %Something is wrong with this function
 
