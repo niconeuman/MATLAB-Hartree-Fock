@@ -1,4 +1,4 @@
-function [MinE,E,ncycle,D] = SCF(H0,gabcd,S,N)
+function [MinE,E,ncycle,D,G,epsilon,F,Fprime] = SCF(H0,gabcd,S,Nel)
 maxcycles = 30;
 converged = 1;
 ncycle = 0;
@@ -13,7 +13,8 @@ Fprime = X'*F*X;
 
 C = X*Cprime;
 [C,epsilon] = Sort_Eigs(C,epsilon);
-D = Build_Density(C,N);
+
+D = Build_Density(C,Nel);
 
 E = zeros(maxcycles,1);
 
@@ -25,7 +26,9 @@ while ncycle < maxcycles && converged ~= 0
     [Cprime,epsilon] = eig(Fprime);
     C = X*Cprime;
     [C,epsilon] = Sort_Eigs(C,epsilon);
-    D = Build_Density(C,N);
+    
+    D = Build_Density(C,Nel);
+    
     E(ncycle) = Fock_Energy(D,H0,F);
         if(ncycle > 1) && abs(E(ncycle)-E(ncycle-1)) < 1e-6
             converged = 0;

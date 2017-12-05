@@ -1,11 +1,11 @@
 function [Shells,NShells] = Build_Shells(basis)
 %This function creates shells which are arrays 
-nb = size(basis,2);
+nb = size(basis,1);
 
 %Something is wrong with this function
 
 %Structure of the Shells matrix = [mu_begin mu_end a nu_begin nu_end b kappa_begin kappa_end c lambda_begin lambda_end d] 
-Shells = zeros(2000,12); %2000 shells is more than enough for now, but maybe later I have to change it
+Shells = zeros(4000,12); %2000 shells is more than enough for now, but maybe later I have to change it
 t = 1;
 mu_begin = 1;
 nu_begin = 1;
@@ -20,28 +20,35 @@ lambda_begin = 1;
 %functions. Have to be careful with this.
 
 for a = 1:nb
+    Length_mu = (2*basis{a}.L+1); %if L = 0,1,2, etc Length_mu = 1,3,5, etc
+    mu_end = mu_begin + Length_mu - 1;
     for b = 1:nb
+        Length_nu = (2*basis{b}.L+1);
+        nu_end = nu_begin + Length_nu - 1;
         for c = 1:nb
+            Length_kappa = (2*basis{c}.L+1);
+            kappa_end = kappa_begin + Length_kappa - 1;
             for d = 1:nb
-                Length_mu = (2*basis{a}.L+1); %if L = 0,1,2, etc Length_mu = 1,3,5, etc
-                Length_nu = (2*basis{b}.L+1);  
-                Length_kappa = (2*basis{c}.L+1);  
-                Length_lambda = (2*basis{d}.L+1);
-                mu_end = mu_begin + Length_mu - 1;
-                nu_end = nu_begin + Length_nu - 1;
-                kappa_end = kappa_begin + Length_kappa - 1;
+  
+                Length_lambda = (2*basis{d}.L+1);   
                 lambda_end = lambda_begin + Length_lambda - 1;
                 
                 
                 Shells(t,:) = [mu_begin mu_end a nu_begin nu_end b kappa_begin kappa_end c lambda_begin lambda_end d];
                 t = t + 1;
-                mu_begin = mu_end + 1;
-                nu_begin = nu_end + 1;
-                kappa_begin = kappa_end + 1;
+                
+                
+                
                 lambda_begin = lambda_end + 1;
             end
+            kappa_begin = kappa_end + 1;
+            lambda_begin = 1;
         end
+        nu_begin = nu_end + 1;
+        kappa_begin = 1;
     end
+    mu_begin = mu_end + 1;
+    nu_begin = 1;
 end
 Shells = Shells(1:(t-1),:);
 NShells = size(Shells,1);
