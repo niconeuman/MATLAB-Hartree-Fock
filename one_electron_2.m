@@ -1,4 +1,4 @@
-function [S,T] = one_electron(g1,g2)
+function [S,T,P,p] = one_electron_2(g1,g2)
 %December 30th 2016
 %Is it worth to use recursion relations for the one electron integrals?
 %If I have f-functions (L = 3), I need the cases
@@ -21,15 +21,16 @@ p = a+b;
 R12sq = (g1.x0-g2.x0)^2+(g1.y0-g2.y0)^2+(g1.z0-g2.z0)^2;
 
 if (g1.L == 0 && g2.L == 0)
-    Ex = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha);
-    Ey = gprod_1D(g1.y0,g1.alpha,g2.y0,g2.alpha);
-    Ez = gprod_1D(g1.z0,g1.alpha,g2.z0,g2.alpha);
+    [Ex,~,~,Px,~] = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha);
+    [Ey,~,~,Py,~] = gprod_1D(g1.y0,g1.alpha,g2.y0,g2.alpha);
+    [Ez,~,~,Pz,~] = gprod_1D(g1.z0,g1.alpha,g2.z0,g2.alpha);
+    
     
     S = Ex*Ey*Ez*sqrt(pi/(g1.alpha + g2.alpha))^3;
     T = S*(a*b/p*(3-2*a*b/p*R12sq));
-    
+    P = [Px;Py;Pz];
 elseif (g1.L == 1 && g2.L ==0)
-    [Ex,p,q,Px,Qx] = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha); %Px = x-coordinate Gaussian product center, Qx = x1-x2
+    [Ex,~,~,Px,Qx] = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha); %Px = x-coordinate Gaussian product center, Qx = x1-x2
     [Ey,~,~,Py,Qy] = gprod_1D(g1.y0,g1.alpha,g2.y0,g2.alpha);
     [Ez,~,~,Pz,Qz] = gprod_1D(g1.z0,g1.alpha,g2.z0,g2.alpha);
     
@@ -61,10 +62,10 @@ elseif (g1.L == 1 && g2.L ==0)
     Tp_z0 = T00x*S00y*Sz0+S00x*T00y*Sz0+S00x*S00y*Tz0;
     
     T = [Tp_x0;Tp_y0;Tp_z0];
-    
+    P = [Px;Py;Pz];
     
 elseif (g1.L == 0 && g2.L == 1)
-    [Ex,p,q,Px,Qx] = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha); %Px = x-coordinate Gaussian product center, Qx = x1-x2
+    [Ex,~,~,Px,Qx] = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha); %Px = x-coordinate Gaussian product center, Qx = x1-x2
     [Ey,~,~,Py,Qy] = gprod_1D(g1.y0,g1.alpha,g2.y0,g2.alpha);
     [Ez,~,~,Pz,Qz] = gprod_1D(g1.z0,g1.alpha,g2.z0,g2.alpha);
     
@@ -94,9 +95,9 @@ elseif (g1.L == 0 && g2.L == 1)
     T0p_z = T00x*S00y*S0z+S00x*T00y*S0z+S00x*S00y*T0z;
     
     T = [T0p_x,T0p_y,T0p_z];
-    
+    P = [Px;Py;Pz];
 elseif (g1.L == 1 && g2.L == 1)
-    [Ex,p,q,Px,Qx] = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha); %Px = x-coordinate Gaussian product center, Qx = x1-x2
+    [Ex,~,~,Px,Qx] = gprod_1D(g1.x0,g1.alpha,g2.x0,g2.alpha); %Px = x-coordinate Gaussian product center, Qx = x1-x2
     [Ey,~,~,Py,Qy] = gprod_1D(g1.y0,g1.alpha,g2.y0,g2.alpha);
     [Ez,~,~,Pz,Qz] = gprod_1D(g1.z0,g1.alpha,g2.z0,g2.alpha);
     
@@ -171,6 +172,6 @@ elseif (g1.L == 1 && g2.L == 1)
     
     
     T = [Tp_xp_x,Tp_xp_y,Tp_xp_z;Tp_yp_x,Tp_yp_y,Tp_yp_z;Tp_zp_x,Tp_zp_y,Tp_zp_z];
-
+    P = [Px;Py;Pz];
 
 end
