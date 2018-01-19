@@ -4,7 +4,8 @@ tmp.x0 = Ax;
 tmp.y0 = Ay;
 tmp.z0 = Az;
 tmp.alpha = alpha;
-tmp.N = (2/pi)^.75*(2^1*alpha^((2+3)/4)/(double_factorial(1,0,0))^.5);
+%L = 1;
+tmp.N = 2^(1)*(2/pi)^.75*alpha^(0.75+0.5*(1))/(double_factorial(1,0,0))^.5;
 tmp.L = 1;
 orbital = tmp;
 
