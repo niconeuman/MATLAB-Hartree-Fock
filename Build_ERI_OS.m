@@ -1,4 +1,4 @@
-function gabcd = Build_ERI_OS(basis,basis2,Shell_List,Boys_Table,pair_data)
+function gabcd = Build_ERI_OS(basis,Shell_List,Boys_Table,pair_data)
 %2 jul 2017. This is a function similar to Build_ERI, but which uses 4
 %loops because it uses the data of Shell_List (an nb x 3 matrix), instead
 %of Shells, (an nb^4 x 12) matrix.
@@ -48,16 +48,20 @@ for a = 1:nb
                     %ad = Shells_List(d,2);
                     basis_d = basis{d};
                     cd_data = pair_data{c,d};
-                
+
                         if (basis_a.L == 0 && basis_b.L == 0 && basis_c.L == 0 && basis_d.L == 0) %SS|SS integrals
+                            gSSSSNValues = primitiveFactorsSSSS_2(basis_a,basis_b,basis_c,basis_d,Boys_Table);
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = sum(gSSSSNValues(:,1));
+
                             %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_ssss_2(basis_a,basis_b,basis_c,basis_d,Boys_Table,ab_data,cd_data);
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_ssss_3(basis_a,basis_b,basis_c,basis_d,Boys_Table,ab_data,cd_data);
+                            %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_ssss_3(basis_a,basis_b,basis_c,basis_d,Boys_Table,ab_data,cd_data);
                         elseif (basis_a.L > 0 && basis_b.L == 0 && basis_c.L == 0 && basis_d.L == 0) %LS|SS integrals
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_vrr(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table,nz);
-     
+                            %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_vrr(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table,nz);
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
                         elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L == 0) %SL|SS integrals
-                            permuted_LSSS = contract_vrr(basis_b,basis_a,basis_c,basis_d,basis_b.L,basis_a.L,basis_c.L,basis_d.L,Boys_Table,nz); %b and a are permuted
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = permute(permuted_LSSS, [2 1 3 4]);
+                            %permuted_LSSS = contract_vrr(basis_b,basis_a,basis_c,basis_d,basis_b.L,basis_a.L,basis_c.L,basis_d.L,Boys_Table,nz); %b and a are permuted
+                            %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = permute(permuted_LSSS, [2 1 3 4]);
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
                         elseif (basis_a.L == 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L == 0) %SS|LS integrals
                             permuted_LSSS = contract_vrr(basis_c,basis_d,basis_a,basis_b,basis_c.L,basis_d.L,basis_a.L,basis_b.L,Boys_Table,nz);
                             permuted_LSSS = permute(permuted_LSSS, [3 4 1 2]);
@@ -66,37 +70,37 @@ for a = 1:nb
                             permuted_LSSS = contract_vrr(basis_d,basis_c,basis_a,basis_b,basis_d.L,basis_c.L,basis_a.L,basis_b.L,Boys_Table,nz); %b and a are permuted
                             permuted_LSSS = permute(permuted_LSSS, [3 4 1 2]);
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = permute(permuted_LSSS, [1 2 4 3]);
-    
-         
+
+
                         elseif (basis_a.L > 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L == 0) %LaS|LcS integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                            
+
                         elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L > 0 && basis_d.L == 0) %SLb|LcS integrals
-                         
+
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                            
+
                         elseif (basis_a.L > 0 && basis_b.L == 0 && basis_c.L == 0 && basis_d.L > 0) %LaS|SLd integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
 
-                        elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L > 0) %SLb|SLd integrals    
-
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                        
-                        elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L == 0) %LaLb|SS integrals   
+                        elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L > 0) %SLb|SLd integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
 
-                            
-                        elseif (basis_a.L == 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L > 0) %SS|LcLd integrals   
+                        elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L == 0) %LaLb|SS integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                        
+
+
+                        elseif (basis_a.L == 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L > 0) %SS|LcLd integrals
+
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
+
                         elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L > 0 && basis_d.L == 0) %LaLb|LcS integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                            
+
                         elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L > 0) %LaLb|SLd integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
@@ -110,14 +114,14 @@ for a = 1:nb
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
 
                         elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L > 0 && basis_d.L > 0) %LaLb|LcLd integrals
-                            
+
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                          
+
                         else
                             break;
                             %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end);
                         end
-                        
+
                         intmu = mu_begin:mu_end;
                         intnu = nu_begin:nu_end;
                         intka = ka_begin:ka_end;
@@ -129,7 +133,7 @@ for a = 1:nb
                         gabcd(intla,intka,intmu,intnu) = permute(gabcd(intmu,intnu,intka,intla),[4 3 1 2]);
                         gabcd(intka,intla,intnu,intmu) = permute(gabcd(intmu,intnu,intka,intla),[3 4 2 1]);
                         gabcd(intla,intka,intnu,intmu) = permute(gabcd(intmu,intnu,intka,intla),[4 3 2 1]);
-                        
+
                 end
             else
                 for d = 1:c
@@ -138,16 +142,20 @@ for a = 1:nb
                     %ad = Shell_List(d,2);
                     basis_d = basis{d};
                     cd_data = pair_data{c,d};
-                    
+
                         if (basis_a.L == 0 && basis_b.L == 0 && basis_c.L == 0 && basis_d.L == 0) %SS|SS integrals
+                            gSSSSNValues = primitiveFactorsSSSS_2(basis_a,basis_b,basis_c,basis_d,Boys_Table);
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = sum(gSSSSNValues(:,1));
+
                             %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_ssss_2(basis_a,basis_b,basis_c,basis_d,Boys_Table,ab_data,cd_data);
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_ssss_3(basis_a,basis_b,basis_c,basis_d,Boys_Table,ab_data,cd_data);
+                            %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_ssss_3(basis_a,basis_b,basis_c,basis_d,Boys_Table,ab_data,cd_data);
                         elseif (basis_a.L > 0 && basis_b.L == 0 && basis_c.L == 0 && basis_d.L == 0) %LS|SS integrals
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_vrr(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table,nz);
-     
+                            %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = contract_vrr(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table,nz);
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
                         elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L == 0) %SL|SS integrals
-                            permuted_LSSS = contract_vrr(basis_b,basis_a,basis_c,basis_d,basis_b.L,basis_a.L,basis_c.L,basis_d.L,Boys_Table,nz); %b and a are permuted
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = permute(permuted_LSSS, [2 1 3 4]);
+                            %permuted_LSSS = contract_vrr(basis_b,basis_a,basis_c,basis_d,basis_b.L,basis_a.L,basis_c.L,basis_d.L,Boys_Table,nz); %b and a are permuted
+                            %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = permute(permuted_LSSS, [2 1 3 4]);
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
                         elseif (basis_a.L == 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L == 0) %SS|LS integrals
                             permuted_LSSS = contract_vrr(basis_c,basis_d,basis_a,basis_b,basis_c.L,basis_d.L,basis_a.L,basis_b.L,Boys_Table,nz);
                             permuted_LSSS = permute(permuted_LSSS, [3 4 1 2]);
@@ -156,37 +164,37 @@ for a = 1:nb
                             permuted_LSSS = contract_vrr(basis_d,basis_c,basis_a,basis_b,basis_d.L,basis_c.L,basis_a.L,basis_b.L,Boys_Table,nz); %b and a are permuted
                             permuted_LSSS = permute(permuted_LSSS, [3 4 1 2]);
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = permute(permuted_LSSS, [1 2 4 3]);
-    
-         
+
+
                         elseif (basis_a.L > 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L == 0) %LaS|LcS integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                            
+
                         elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L > 0 && basis_d.L == 0) %SLb|LcS integrals
-                         
+
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                            
+
                         elseif (basis_a.L > 0 && basis_b.L == 0 && basis_c.L == 0 && basis_d.L > 0) %LaS|SLd integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
 
-                        elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L > 0) %SLb|SLd integrals    
-
-                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                        
-                        elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L == 0) %LaLb|SS integrals   
+                        elseif (basis_a.L == 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L > 0) %SLb|SLd integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
 
-                            
-                        elseif (basis_a.L == 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L > 0) %SS|LcLd integrals   
+                        elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L == 0) %LaLb|SS integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                        
+
+
+                        elseif (basis_a.L == 0 && basis_b.L == 0 && basis_c.L > 0 && basis_d.L > 0) %SS|LcLd integrals
+
+                            gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
+
                         elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L > 0 && basis_d.L == 0) %LaLb|LcS integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                            
+
                         elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L == 0 && basis_d.L > 0) %LaLb|SLd integrals
 
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
@@ -200,14 +208,14 @@ for a = 1:nb
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
 
                         elseif (basis_a.L > 0 && basis_b.L > 0 && basis_c.L > 0 && basis_d.L > 0) %LaLb|LcLd integrals
-                            
+
                             gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = shellOS(basis_a,basis_b,basis_c,basis_d,basis_a.L,basis_b.L,basis_c.L,basis_d.L,Boys_Table);
-                          
+
                         else
                             break;
                             %gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end) = gabcd(mu_begin:mu_end,nu_begin:nu_end,ka_begin:ka_end,la_begin:la_end);
                         end
-                        
+
                         intmu = mu_begin:mu_end;
                         intnu = nu_begin:nu_end;
                         intka = ka_begin:ka_end;
@@ -219,7 +227,7 @@ for a = 1:nb
                         gabcd(intla,intka,intmu,intnu) = permute(gabcd(intmu,intnu,intka,intla),[4 3 1 2]);
                         gabcd(intka,intla,intnu,intmu) = permute(gabcd(intmu,intnu,intka,intla),[3 4 2 1]);
                         gabcd(intla,intka,intnu,intmu) = permute(gabcd(intmu,intnu,intka,intla),[4 3 2 1]);
-                        
+
                 end
             end
         end
@@ -230,7 +238,7 @@ end
 %     for intnu = 1:intmu
 %         for intka = 1:intmu
 %            if (intka == intmu)
-%                 for intla = 1:intnu             
+%                 for intla = 1:intnu
 %                         gabcd(intnu,intmu,intka,intla) = gabcd(intmu,intnu,intka,intla);
 %                         gabcd(intmu,intnu,intla,intka) = gabcd(intmu,intnu,intka,intla);
 %                         gabcd(intnu,intmu,intla,intka) = gabcd(intmu,intnu,intka,intla);
@@ -254,35 +262,6 @@ end
 %     end
 % end
 
-% for a = 1:Ncont
-%     for b = 1:Ncont
-%         for c = 1:Ncont
-%             for d = 1:Ncont
-%                 if (gabcd(a,b,c,d) == 0)
-%                     gabcd(a,b,c,d) = gabcd(b,a,c,d);
-%                 end
-%                 if (gabcd(a,b,c,d) == 0)
-%                     gabcd(a,b,c,d) = gabcd(a,b,d,c);
-%                 end
-%                 if (gabcd(a,b,c,d) == 0)
-%                     gabcd(a,b,c,d) = gabcd(b,a,d,c);
-%                 end
-%                 if (gabcd(a,b,c,d) == 0)
-%                     gabcd(a,b,c,d) = gabcd(d,c,a,b);
-%                 end
-%                 if (gabcd(a,b,c,d) == 0)
-%                     gabcd(a,b,c,d) = gabcd(d,c,b,a);
-%                 end
-%                 if (gabcd(a,b,c,d) == 0)
-%                     gabcd(a,b,c,d) = gabcd(c,d,a,b);
-%                 end
-%                 if (gabcd(a,b,c,d) == 0)
-%                     gabcd(a,b,c,d) = gabcd(c,d,b,a);
-%                 end
-%             end
-%         end
-%     end
-% end
 
 
 end

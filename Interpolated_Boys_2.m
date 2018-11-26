@@ -27,16 +27,16 @@ n = (0:1:30);Boys_Table = [1./(2*n+1); Boys_Table];
 %I must define the following variable as global outside the
 %Interpolated_Boys function and then call it as global in this function and
 %use it.
-%The interpolation formula from Helgaker's book is the following:
+%The interpolation formula from Helgaker's book is the following: '
 
 if (x > 60)
     %old sqrt_pi = 1.772453850905516;
     %sqrt_pi/2 = 0.886226925452758;
-    %Eq. 9.8.9 of Helgaker's book
+    %Eq. 9.8.9 of Helgaker's book'
     %F(n,x)= (2n-1)!!/2^(n+1)*sqrt(pi/x^(2n+1));
     %From wikipedia
     %(2*k-1)!! = (2k)!/2^k*k! (for k = 1,2,etc)
-%Because for [ss|ss] n = 0 always, this if is not necessary.    
+%Because for [ss|ss] n = 0 always, this if is not necessary.
     %note: prod(1:n) is at least 3 times faster than factorial(n)
 %     if n > 0
 %     %output = (prod(1:2*n)/2^n/prod(1:n))/2^(n+1)*sqrt(pi/x^(2*n+1));
@@ -47,7 +47,7 @@ if (x > 60)
 %     end
     output = 0.886226925452758/sqrt(x);
 else
-xstep = 0.1;       
+xstep = 0.1;
 index = floor(x/xstep)+1;
 x_index = (index-1)*xstep;
 Dx = (x-x_index); %Difference which enters the Taylor expansion
@@ -63,7 +63,7 @@ Dx = (x-x_index); %Difference which enters the Taylor expansion
  hundred_twentieth_Dx5 = 8.333333333333334e-3*Dx5;
 %  seven_hundred_twentieth_Dx6 = 1.388888888888889e-3*Dx6;
 %  Dx7_over_5040 = 1.984126984126984e-04*Dx7;
- 
+
 %m = n + 1; %column 1 corresponds to n = 0, etc;
 %n = 0 always!
 
