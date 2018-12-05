@@ -251,7 +251,8 @@ def dohrr(La,Lc,order):
 
     return current
 
-def dohrr2(La,Lb,Lc,Ld,indexNbr,order):
+def dohrr2(La,Lb,Lc,Ld,indexNbr,order,FileName):
+    OSfile = open(FileName,'a+')
     shellInda = shell(La)
     shellIndb = shell(Lb)
     shellIndc = shell(Lc)
@@ -282,10 +283,12 @@ def dohrr2(La,Lb,Lc,Ld,indexNbr,order):
                     lhTerm = ind2str(lhs) + ' = '
                     firstTerm = 'AB' + u[increaseDir] + '*'  + ind2str(ABTerm)
                     secondTerm = ind2str(Ap1BTerm)      
-                  
-                    print(lhTerm + firstTerm + ' + ' + secondTerm)
+                    
+                    stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + '\n'
+                    OSfile.write(stringOutput)
+                    #print(stringOutput)
 
 
-    return current
+    return stringOutput
     
-VRR = dohrr2(2,1,1,0,2,0)
+#VRR = dohrr2(2,1,1,0,2,0)

@@ -166,7 +166,8 @@ def findIncreaseDir(current):
     return increaseDir
 
 
-def doascs(La,Lc,order):
+def doascs(La,Lc,order,FileName):
+    OSfile = open(FileName,'a+')
     #I require something that reverts to vrr if Lc == 0
     shell_a = shell(La)
     shellInd = shell(Lc)
@@ -225,33 +226,34 @@ def doascs(La,Lc,order):
                 fourthTerm = ' + ' + str(current_a[increaseDir]-1) + '*oo2pq*(' + ind2str(am1cm1Term) + ')'
             else:
                 fourthTerm = ''
-            
-            print(lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm + fourthTerm)
+            stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm + fourthTerm + '\n'
+            OSfile.write(stringOutput)
+            #print(stringOutput)
     #        print('lhs = '+ str(lhs))
     #        print('PATerm = '+ str(PATerm))
     #        print('WPTerm = '+ str(WPTerm))
 
-    return current
+    return stringOutput
 
 #This part starts to generate actual code
 #VRR = doascs(2,2,0)
 
-LaMax = 4
-LcMax = 4
-orderMax = LaMax+LcMax+1
-
-for La in range(1,LaMax+1):
-    for Lc in range(1):
-        for order in range(orderMax-La-Lc):
-            
-            tmpout = vrrGenerator.doVRR_1(La,order)
-            print(' ')
-
-    for Lc in range(1,LcMax+1):
-        for order in range(orderMax-La-Lc):
-            
-            tmpout = doascs(La,Lc,order)
-            print(' ')    
+#LaMax = 4
+#LcMax = 4
+#orderMax = LaMax+LcMax+1
+#
+#for La in range(1,LaMax+1):
+#    for Lc in range(1):
+#        for order in range(orderMax-La-Lc):
+#            
+#            tmpout = vrrGenerator.doVRR_1(La,order)
+#            print(' ')
+#
+#    for Lc in range(1,LcMax+1):
+#        for order in range(orderMax-La-Lc):
+#            
+#            tmpout = doascs(La,Lc,order)
+#            print(' ')    
 
     
 

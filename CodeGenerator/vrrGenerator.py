@@ -125,7 +125,8 @@ def findIncreaseDir(current):
     return increaseDir
 
 
-def doVRR_1(L,order):
+def doVRR_1(L,order,FileName):
+    OSfile = open(FileName,'a+')
     shellInd = shell(L)
 #    print(shellInd)
     for t in range(np.size(shellInd,0)):
@@ -162,15 +163,16 @@ def doVRR_1(L,order):
             thirdTerm = ' + ' + str(current[increaseDir]-1) + '*oo2p*(' + ind2str(am2Term_1) + ' - qoppq*' + ind2str(am2Term_2) + ')'
         else:
             thirdTerm = ''
-        
-        print(lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm)
+        stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm + '\n'
+        OSfile.write(stringOutput)
+        #print(stringOutput)
 #        print('lhs = '+ str(lhs))
 #        print('PATerm = '+ str(PATerm))
 #        print('WPTerm = '+ str(WPTerm))
 
-    return current
+    return stringOutput
     
-VRR = doVRR_1(6,1)
+#VRR = doVRR_1(6,1)
 
 
 
