@@ -27,7 +27,7 @@ FileName = 'OS' + hrrGenerator.stringType(LaMax) + hrrGenerator.stringType(LbMax
 
 OSfile = open(FileName,'w+')
 
-for La in range(1,LaMax+1):
+for La in range(1,orderMax): #Obtain up to [(La+Lb+Lc+Ld)s|ss]
     for Lc in range(1):
         for order in range(orderMax-La-Lc):
             
@@ -39,13 +39,13 @@ for La in range(1,LaMax+1):
     for Lc in range(1,LcMax+1):
         for order in range(orderMax-La-Lc):
             
-            tmpout = ascsGenerator.doascs(La,Lc,order,FileName)
+            tmpout = ascsGenerator.doascs(La,LcMax-La,order,FileName) #Obtain up to [(La+Lb)s|(Lc+Ld)s]
             #OSfile.write(ascsGenerator.doascs(La,Lc,order))
             #print(' ')    
 
-for Lb in range(1,LbMax+1):
+for Lb in range(1,LbMax+1):     #The order of these loops should be reversed
     for Ld in range(1,LdMax+1):
-        hrrGenerator.dohrr2(LaMax,Lb,LcMax,Ld,2,0,FileName)
+        hrrGenerator.dohrr2(LaMax+LbMax-Lb,Lb,LcMax+LdMax-Ld,Ld,2,0,FileName)
         #OSfile.write(hrrGenerator.dohrr2(LaMax,Lb,LcMax,Ld,2,0))
 
 OSfile.close()
