@@ -163,7 +163,7 @@ def doVRR_1(L,order,FileName):
             thirdTerm = ' + ' + str(current[increaseDir]-1) + '*oo2p*(' + ind2str(am2Term_1) + ' - qoppq*' + ind2str(am2Term_2) + ')'
         else:
             thirdTerm = ''
-        stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm + '\n'
+        stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm + ';\n'
         OSfile.write(stringOutput)
         #print(stringOutput)
 #        print('lhs = '+ str(lhs))
@@ -172,7 +172,7 @@ def doVRR_1(L,order,FileName):
 
     return stringOutput
     
-#VRR = doVRR_1(6,1)
+VRR = doVRR_1(1,0,'dummyVRR')
 
 
 

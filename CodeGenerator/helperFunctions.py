@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Sep  9 09:39:52 2018
+Created on Mon Dec 24 09:56:58 2018
 
 @author: nneuman
 
-This routine generates code for horizontal recursion relations
-
+This file contains the functions needed for the different OS recursion relations
 """
 
 import numpy as np
-import helperFunctions as hF
 
 
 #This code works correctly-----------------------------------------------------
@@ -179,7 +177,10 @@ def ind2str(term):
                             strCart = strCart + u[dir] + str(integral[dir])
             returnStr = returnStr + strType + strCart + '_'            
 #        print(returnStr)
-    return returnStr + str(order)
+    if order < 100:        
+        return returnStr + str(order)
+    else:
+        return returnStr[0:-1] #I remove the last '_' and don't put the order index
 
 def findIncreaseDir(current):
     if (all(current) != 0):         #If there are no zero indexes
@@ -210,120 +211,3 @@ def findIncreaseDir(current):
                 increaseDir = increaseDir[-1]               #If two or more directions have the same index, increment the last one (y or z) 
     return increaseDir
 
-
-def dohrr(La,Lc,order):
-    shell_a = shell(La)
-    shellInd = shell(Lc)
-#    print(shellInd)
-    for ta in range(np.size(shell_a,0)):
-        current_a = shell_a[ta]
-        for t in range(np.size(shellInd,0)):
-            current = shellInd[t]
-    
-    
-            increaseDir = findIncreaseDir(current)
-    
-    #        print('current = ' + str(current))        
-    #        print('increasedir = ' + str(increaseDir))
-    #        print(decrementDir(current,increaseDir,1))
-    
-    #This part contains the actual recursion relations (i.e. the logic)--------------------------
-            lhs = np.array([current_a,current,[order]])
-            ABTerm = np.array([current_a,decrementDir(current,increaseDir,1),[order]])
-            Ap1BTerm = np.array([decrementDir(current_a,increaseDir,-1),decrementDir(current,increaseDir,1),[order]])
-
-#            print(am1cm1Term)
-                #This except case will not be executed normally, but if it were executed, 
-                #it would later call ind2str with a [0] array instead of a 3-element array.
-                #Should be handled
-    
-    #        am2Term_2 = np.array([decrementDir(current,increaseDir,2),[order+1]])
-    #-------------------------------------------------------------------------------------------        
-            u = ('x','y','z')
-            
-            lhTerm = ind2str(lhs) + ' = '
-            firstTerm = 'AB' + u[increaseDir] + '*'  + ind2str(ABTerm)
-            secondTerm = ind2str(Ap1BTerm)      
-          
-            print(lhTerm + firstTerm + ' + ' + secondTerm)
-    #        print('lhs = '+ str(lhs))
-    #        print('PATerm = '+ str(PATerm))
-    #        print('WPTerm = '+ str(WPTerm))
-
-    return current
-
-#before performing horizontal recursion I need to contract the integrals
-
-def contract(La,Lb,Lc,Ld,indexNbr,FileName):
-    OSfile = open(FileName,'a+')
-    shellInda = shell(La)
-    shellIndb = shell(Lb)
-    shellIndc = shell(Lc)
-    shellIndd = shell(Ld)
-#    print(shellInd)
-    for ta in range(np.size(shellInda,0)):
-        current_a = shellInda[ta]
-        for tb in range(np.size(shellIndb,0)):
-            current_b = shellIndb[tb]
-            for tc in range(np.size(shellIndc,0)):
-                current_c = shellIndc[tc]
-                for td in range(np.size(shellIndd,0)):
-                    current_d = shellIndd[td]
-                    lhs = np.array([current_a,current_b,current_c,current_d,[500]]) #A large order so it is not included in ind2str
-                    rhs = np.array([current_a,current_b,current_c,current_d,[0]]) #Order = 0 because these are the relevant integrals
-                    lhTerm = hF.ind2str(lhs) + ' = '
-                    rhTerm = 'sum(' + hF.ind2str(rhs) + ')'
-                    stringOutput = lhTerm + rhTerm + ';\n'
-                    OSfile.write(stringOutput)
-                        
-                        
-def dohrr2(La,Lb,Lc,Ld,indexNbr,order,FileName):
-    OSfile = open(FileName,'a+')
-    shellInda = shell(La)
-    shellIndb = shell(Lb)
-    shellIndc = shell(Lc)
-    shellIndd = shell(Ld)
-#    print(shellInd)
-    for ta in range(np.size(shellInda,0)):
-        current_a = shellInda[ta]
-        for tb in range(np.size(shellIndb,0)):
-            current_b = shellIndb[tb]
-            for tc in range(np.size(shellIndc,0)):
-                current_c = shellIndc[tc]
-                for td in range(np.size(shellIndd,0)):
-                    current_d = shellIndd[td]
-
-                    if (indexNbr == 2):
-                        #current = current_b #just for return purposes
-                        increaseDir = findIncreaseDir(current_b)
-                    
-                        #This part contains the actual recursion relations (i.e. the logic)--------------------------
-                        lhs = np.array([current_a,current_b,current_c,current_d,[order]])
-                        ABTerm = np.array([current_a,decrementDir(current_b,increaseDir,1),current_c,current_d,[order]])
-                        Ap1BTerm = np.array([decrementDir(current_a,increaseDir,-1),decrementDir(current_b,increaseDir,1),current_c,current_d,[order]])
-                        
-                    elif (indexNbr == 4):    
-                        increaseDir = findIncreaseDir(current_d)
-                        
-                        lhs = np.array([current_a,current_b,current_c,current_d,[order]])
-                        ABTerm = np.array([current_a,current_b,current_c,decrementDir(current_d,increaseDir,1),[order]])
-                        Ap1BTerm = np.array([current_a,current_b,decrementDir(current_c,increaseDir,-1),decrementDir(current_d,increaseDir,1),[order]])
-            #        am2Term_2 = np.array([decrementDir(current,increaseDir,2),[order+1]])
-            #-------------------------------------------------------------------------------------------        
-                    u = ('x','y','z')
-                    
-                    lhTerm = hF.ind2str(lhs) + ' = '
-                    if (indexNbr == 2):
-                        firstTerm = 'AB' + u[increaseDir] + '*'  + hF.ind2str(ABTerm)
-                    elif (indexNbr == 4):
-                        firstTerm = 'CD' + u[increaseDir] + '*'  + hF.ind2str(ABTerm)
-                    secondTerm = hF.ind2str(Ap1BTerm)      
-                    
-                    stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + ';\n'
-                    OSfile.write(stringOutput)
-                    #print(stringOutput)
-
-
-    return stringOutput
-    
-#VRR = dohrr2(2,1,1,0,2,0)

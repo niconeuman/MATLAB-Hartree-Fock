@@ -226,7 +226,7 @@ def doascs(La,Lc,order,FileName):
                 fourthTerm = ' + ' + str(current_a[increaseDir]-1) + '*oo2pq*(' + ind2str(am1cm1Term) + ')'
             else:
                 fourthTerm = ''
-            stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm + fourthTerm + '\n'
+            stringOutput = lhTerm + firstTerm + ' + ' + secondTerm + thirdTerm + fourthTerm + ';\n'
             OSfile.write(stringOutput)
             #print(stringOutput)
     #        print('lhs = '+ str(lhs))
